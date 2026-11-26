@@ -1,390 +1,813 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jade's Writing Workspace</title>
-  
-  <!-- Beautiful Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  
-  <style>
-    /* ======= Base Styles ======= */
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nocturne Archive — Mood & Media Sanctuary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:      #04020d;
+  --deep:      #0a0618;
+  --card:      rgba(12, 6, 28, 0.55);
+  --card2:     rgba(18, 9, 38, 0.65);
+  --border:    rgba(140, 60, 220, 0.25);
+  --border2:   rgba(180, 90, 255, 0.48);
+  --glow:      #9333ea;
+  --glow2:     #c026d3;
+  --accent:    #a855f7;
+  --rose:      #e879f9;
+  --silver:    #c4b5d4;
+  --muted:     #8b78a6;
+  --text:      #ede8f5;
+}
 
-    body {
-      /* Applying the elegant writing font to the whole body */
-      font-family: 'Lora', serif;
-      background: url('https://images7.alphacoders.com/135/1350454.png') no-repeat center center fixed;
-      background-size: cover;
-      color: #ddd;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 30px 40px;
-      box-shadow: 0 0 30px rgba(30, 30, 47, 0.85);
-      border-radius: 12px;
-      position: relative;
-      overflow-x: hidden;
-      background-color: #0c0d14; /* Fallback */
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-    /* Rain canvas styles */
-    #rain-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'IM Fell English', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
-    /* Ensure content stays above rain */
-    body > *:not(#rain-canvas) {
-      position: relative;
-      z-index: 1;
-    }
+/* ══════════════════════════════════════
+   BACKGROUND & PARTICLES
+══════════════════════════════════════ */
+.bg-fixed {
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url('https://i.pinimg.com/1200x/44/09/cc/4409cc355c854053490939becb25fa69.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  filter: brightness(0.28) saturate(1.4) hue-rotate(10deg);
+}
+.bg-overlay {
+  position: fixed; inset: 0; z-index: 1;
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(80,20,160,0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 15% 60%, rgba(140,30,200,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 40%, rgba(180,50,220,0.15) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(4,2,13,0.35) 0%, rgba(4,2,13,0.92) 100%);
+}
 
-    /* Headers - Beautiful Serif Display Font */
-    h1, h2 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: #f0f0f5;
-      text-shadow: 0 0 8px rgba(123, 123, 157, 0.8);
-    }
+.particles { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: rgba(168,85,247,0.7);
+  animation: float-up linear infinite;
+}
+@keyframes float-up {
+  0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+}
 
-    h1 {
-      font-size: 2.8rem;
-      margin-bottom: 5px;
-    }
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(4,2,13,0.65);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+}
+.nav-brand {
+  font-family: 'Cinzel', serif;
+  font-size: 13px; letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.nav-brand:hover { color: var(--rose); }
+.nav-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
 
-    .subtitle {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      font-style: italic;
-      color: #a5d6ff;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
-    }
+/* ══════════════════════════════════════
+   MAIN CONTAINER & VIEW TRANSITIONS
+══════════════════════════════════════ */
+.page {
+  position: relative; z-index: 3;
+  max-width: 960px; width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-    /* Form & Writing Box Controls */
-    .editor-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 20px;
-    }
+.view {
+  display: none;
+  animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.view.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-    .meta-inputs {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+/* ══════════════════════════════════════
+   HEADERS & DIVIDERS
+══════════════════════════════════════ */
+.header-block {
+  text-align: center;
+  margin-bottom: 44px;
+}
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+}
+.eyebrow::before, .eyebrow::after {
+  content: '';
+  width: 45px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2));
+}
+.eyebrow::after { background: linear-gradient(90deg, var(--border2), transparent); }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-      min-width: 140px;
-    }
+.main-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(28px, 5.5vw, 54px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  background: linear-gradient(175deg, #f5f0ff 0%, #d8b4fe 35%, #a855f7 65%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 35px rgba(147,51,234,0.35));
+  margin-bottom: 12px;
+}
 
-    .input-group.small {
-      max-width: 150px;
-    }
+.sub-prompt {
+  font-style: italic;
+  font-size: clamp(15px, 2vw, 18px);
+  color: var(--silver);
+}
 
-    label {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #8ab4f8;
-      font-weight: 700;
-    }
+.divider {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin: 22px 0;
+}
+.div-sym { font-size: 16px; color: var(--accent); animation: pulse-sym 3s ease-in-out infinite; }
+.div-line { width: 100px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+@keyframes pulse-sym {
+  0%,100% { opacity: 0.5; }
+  50%     { opacity: 1; text-shadow: 0 0 12px var(--accent); }
+}
 
-    /* Transparent Inputs & Textarea */
-    input[type="text"],
-    input[type="number"],
-    textarea {
-      width: 100%;
-      background: transparent; /* Fully transparent */
-      border: 1px solid rgba(138, 180, 248, 0.4);
-      border-radius: 8px;
-      padding: 15px 18px;
-      color: #f0f0f5;
-      font-family: 'Lora', serif; /* Beautiful readable font */
-      font-size: 1.15rem;
-      outline: none;
-      /* Adds a slight glass blur so text stays readable over the background */
-      backdrop-filter: blur(4px); 
-      -webkit-backdrop-filter: blur(4px);
-      transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-    }
+/* ══════════════════════════════════════
+   TRANSPARENT GLASS BUTTONS (MOODS)
+══════════════════════════════════════ */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
 
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    textarea:focus {
-      border-color: #8ab4f8;
-      box-shadow: 0 0 15px rgba(138, 180, 248, 0.4);
-      background: rgba(255, 255, 255, 0.03); /* Just a tiny hint of light when typing */
-    }
+.glass-btn {
+  background: rgba(14, 7, 32, 0.32);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 26px 22px;
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
-    /* Adjust placeholder color to fit the transparent theme */
-    ::placeholder {
-      color: rgba(240, 240, 245, 0.4);
-    }
+.glass-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.18), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-    textarea {
-      min-height: 450px;
-      line-height: 1.8;
-      resize: vertical;
-      white-space: pre-wrap;
-    }
+.glass-btn:hover {
+  background: rgba(45, 16, 85, 0.42);
+  border-color: var(--border2);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(100, 30, 200, 0.25), inset 0 0 15px rgba(168, 85, 247, 0.15);
+}
 
-    .stats-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1rem;
-      color: #b0aaff;
-      margin-top: -5px;
-      font-style: italic;
-    }
+.glass-btn:hover::before { opacity: 1; }
 
-    /* Buttons */
-    .actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
+.mood-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+}
 
-    button.action-btn {
-      font-family: 'Playfair Display', serif;
-      background: rgba(97, 90, 196, 0.8);
-      color: white;
-      border: 1px solid #8777e8;
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 40px;
-      cursor: pointer;
-      backdrop-filter: blur(5px);
-      box-shadow: 0 5px 15px rgba(97, 90, 196, 0.4);
-      transition: all 0.3s ease;
-      letter-spacing: 1px;
-    }
+.mood-name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+}
 
-    button.action-btn:hover {
-      background: rgba(135, 119, 232, 0.9);
-      transform: scale(1.03);
-      box-shadow: 0 8px 20px rgba(135, 119, 232, 0.7);
-    }
+.mood-desc {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
 
-    button.action-btn:active {
-      transform: scale(0.97);
-    }
+/* ══════════════════════════════════════
+   VIEW 2: CATEGORY SELECTION & RESULTS
+══════════════════════════════════════ */
+.top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-    /* Neon button link */
-    .neon-button {
-      font-family: 'Playfair Display', serif;
-      display: inline-block;
-      padding: 12px 24px;
-      border-radius: 30px;
-      background: rgba(97, 90, 196, 0.8);
-      border: 1px solid #8777e8;
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-decoration: none;
-      backdrop-filter: blur(5px);
-      box-shadow: 0 0 10px rgba(135, 119, 232, 0.5);
-      transition: all 0.3s ease;
-    }
+.back-btn {
+  background: rgba(14, 7, 32, 0.35);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 18px;
+  color: var(--silver);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .neon-button:hover {
-      box-shadow: 0 0 20px #b0aaff, 0 0 30px rgba(176, 170, 255, 0.5);
-      background: rgba(135, 119, 232, 0.9);
-      color: #fff;
-      transform: scale(1.03);
-    }
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--rose);
+  background: rgba(80, 20, 160, 0.25);
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.3);
+}
 
-    /* Links & Footer */
-    a {
-      color: #8ab4f8;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
 
-    a:hover {
-      color: #fff;
-      text-shadow: 0 0 10px #8ab4f8;
-    }
+.cat-btn {
+  background: rgba(14, 7, 32, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 13px 22px;
+  color: var(--silver);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.28s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    footer {
-      margin-top: 40px;
-      font-size: 0.95rem;
-      text-align: center;
-      color: #999;
-      letter-spacing: 0.1em;
-      border-top: 1px solid rgba(138, 180, 248, 0.2);
-      padding-top: 20px;
-    }
+.cat-btn:hover {
+  border-color: var(--border2);
+  color: var(--text);
+  background: rgba(60, 18, 115, 0.35);
+  transform: translateY(-2px);
+}
 
-    /* ======= Print & PDF Export Styles ======= */
-    @media print {
-      body {
-        background: url('https://images7.alphacoders.com/135/1350454.png') no-repeat center center !important;
-        background-size: cover !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color: #ffffff !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        padding: 20px !important;
-        max-width: 100% !important;
-      }
+.cat-btn.active {
+  background: rgba(120, 35, 210, 0.38);
+  border-color: var(--rose);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.4);
+}
 
-      #rain-canvas,
-      .actions,
-      footer,
-      .stats-bar {
-        display: none !important;
-      }
+/* ══════════════════════════════════════
+   RESULTS LIST (TITLES ONLY)
+══════════════════════════════════════ */
+.results-box {
+  background: rgba(10, 5, 24, 0.42);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  min-height: 260px;
+}
 
-      input[type="text"],
-      input[type="number"],
-      textarea {
-        background: transparent !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(138, 180, 248, 0.6) !important;
-        box-shadow: none !important;
-      }
+.results-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 16px;
+}
 
-      textarea {
-        height: auto !important;
-        min-height: 600px !important;
-      }
-    }
-  </style>
+.title-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title-item {
+  padding: 16px 22px;
+  background: rgba(18, 9, 38, 0.38);
+  border: 1px solid rgba(140, 60, 220, 0.18);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.25s;
+}
+
+.title-item.is-quote {
+  font-family: 'IM Fell English', Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.title-item:hover {
+  background: rgba(50, 15, 100, 0.4);
+  border-color: var(--border2);
+  transform: translateX(5px);
+}
+
+.item-index {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 24px;
+}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  text-align: center;
+  position: relative; z-index: 3;
+}
+.footer-copy {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .cat-btn { width: 100%; justify-content: center; }
+  .results-box { padding: 18px; }
+}
+</style>
 </head>
-
 <body>
-  <!-- Rain Canvas -->
-  <canvas id="rain-canvas"></canvas>
 
-  <header>
-    <h1>Jade's Writer Desk</h1>
-    <p class="subtitle">Draft your next chapter in style ✍️🚀</p>
-  </header>
+<div class="bg-fixed"></div>
+<div class="bg-overlay"></div>
+<div class="particles" id="particles"></div>
 
-  <main class="editor-container">
-    <div class="meta-inputs">
-      <div class="input-group small">
-        <label for="chapter-num">Chapter No.</label>
-        <input type="number" id="chapter-num" value="1" min="1" />
+<nav>
+  <div class="nav-brand" onclick="goHome()">✦ Nocturne Curations</div>
+  <div class="nav-status" id="nav-status">Select Your State</div>
+</nav>
+
+<div class="page">
+
+  <!-- ══ PAGE 1: MOOD SELECTION ══ -->
+  <div id="view-moods" class="view active">
+    <div class="header-block">
+      <div class="eyebrow">Atmosphere & Resonance</div>
+      <h1 class="main-title">How Does Your<br>Soul Feel Tonight?</h1>
+      <div class="divider">
+        <span class="div-sym">⟆</span>
+        <div class="div-line"></div>
+        <span class="div-sym">✦</span>
+        <div class="div-line"></div>
+        <span class="div-sym">⟇</span>
       </div>
-      <div class="input-group">
-        <label for="chapter-title">Chapter Title</label>
-        <input type="text" id="chapter-title" placeholder="e.g. Into the Backrooms..." />
+      <p class="sub-prompt">Choose a mood to unveil curated titles from the archive.</p>
+    </div>
+
+    <div class="mood-grid">
+      <button class="glass-btn" onclick="selectMood('melancholic')">
+        <span class="mood-icon">🌧️</span>
+        <span class="mood-name">Melancholic</span>
+        <span class="mood-desc">Quiet rain, lingering grief, and bittersweet memories</span>
+      </button>
+
+      <button class="glass-btn" onclick="selectMood('forlorn')">
+        <span class="mood-icon">🌑</span>
+        <span class="mood-name">Dark & Forlorn</span>
+        <span class="mood-desc">Shadows, gothic dread, and existential isolation</span>
+      </button>
+
+      <button class="glass-btn" onclick="selectMood('nostalgic')">
+        <span class="mood-icon">🕯️</span>
+        <span class="mood-name">Nostalgic</span>
+        <span class="mood-desc">Fading warmth, distant summers, and things left behind</span>
+      </button>
+
+      <button class="glass-btn" onclick="selectMood('ethereal')">
+        <span class="mood-icon">🦋</span>
+        <span class="mood-name">Ethereal & Dreamy</span>
+        <span class="mood-desc">Weightless wonder, starlight, and quiet surrealism</span>
+      </button>
+
+      <button class="glass-btn" onclick="selectMood('defiant')">
+        <span class="mood-icon">🗡️</span>
+        <span class="mood-name">Defiant & Fierce</span>
+        <span class="mood-desc">Unbreakable will, rebellion, and burning against fate</span>
+      </button>
+
+      <button class="glass-btn" onclick="selectMood('serene')">
+        <span class="mood-icon">🌙</span>
+        <span class="mood-name">Midnight Calm</span>
+        <span class="mood-desc">Still waters, solitary peace, and gentle solitude</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2: CATEGORY & TITLES ══ -->
+  <div id="view-explore" class="view">
+    <div class="top-controls">
+      <button class="back-btn" onclick="goHome()">← Return to Moods</button>
+      <span id="selected-mood-badge" style="font-family:'Space Mono',monospace; font-size:11px; color:var(--rose); letter-spacing:0.15em; text-transform:uppercase;"></span>
+    </div>
+
+    <div class="header-block" style="margin-bottom: 30px;">
+      <div class="eyebrow">The Archive Opens</div>
+      <h2 class="main-title" style="font-size: clamp(24px, 4.5vw, 42px);">What Would You Like To Do?</h2>
+      <p class="sub-prompt">Select a medium below to reveal its names.</p>
+    </div>
+
+    <div class="category-row">
+      <button class="cat-btn" data-cat="quotes" onclick="selectCategory('quotes')">📜 Quotes</button>
+      <button class="cat-btn" data-cat="songs" onclick="selectCategory('songs')">🎵 Songs</button>
+      <button class="cat-btn" data-cat="animeMovies" onclick="selectCategory('animeMovies')">⛩️ Anime Movies</button>
+      <button class="cat-btn" data-cat="movies" onclick="selectCategory('movies')">🎬 Movies</button>
+      <button class="cat-btn" data-cat="series" onclick="selectCategory('series')">🕯️ Anime & Series</button>
+    </div>
+
+    <div class="results-box" id="results-box">
+      <div class="results-placeholder">
+        Choose a category above to summon the list...
       </div>
     </div>
+  </div>
 
-    <div class="input-group">
-      <label for="content-box">Chapter Content</label>
-      <textarea id="content-box" placeholder="The rain battered against the window as the first words were written..."></textarea>
+</div>
+
+<footer>
+  <div class="footer-copy">✦ Nocturne Archive · Names Only · No Tracking ✦</div>
+</footer>
+
+<script>
+// Floating particles
+const particleContainer = document.getElementById('particles');
+for (let i = 0; i < 28; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.animationDuration = (8 + Math.random() * 14) + 's';
+  p.style.animationDelay = (Math.random() * 10) + 's';
+  p.style.width = p.style.height = (Math.random() > 0.7 ? 3 : 2) + 'px';
+  particleContainer.appendChild(p);
+}
+
+// Curated Archive (Titles & Quotes only)
+const ARCHIVE = {
+  melancholic: {
+    label: "🌧️ Melancholic",
+    quotes: [
+      "“Grief is just love with nowhere left to go.”",
+      "“Some nights are made only for remembering what cannot return.”",
+      "“We were never meant to keep everything we held.”",
+      "“Even the rain sounds tired when it falls on empty streets.”",
+      "“Silence is the loudest answer a departed soul can leave.”"
+    ],
+    songs: [
+      "Glimpse of Us — Joji",
+      "Space Song — Beach House",
+      "The Night We Met — Lord Huron",
+      "Fourth of July — Sufjan Stevens",
+      "Between the Bars — Elliott Smith"
+    ],
+    animeMovies: [
+      "5 Centimeters per Second",
+      "I Want to Eat Your Pancreas",
+      "A Silent Voice",
+      "The Garden of Words",
+      "Grave of the Fireflies"
+    ],
+    movies: [
+      "Manchester by the Sea",
+      "Eternal Sunshine of the Spotless Mind",
+      "Aftersun",
+      "Her",
+      "Blue Valentine"
+    ],
+    series: [
+      "Violet Evergarden",
+      "Your Lie in April",
+      "Anohana: The Flower We Saw That Day",
+      "Normal People",
+      "The Leftovers"
+    ]
+  },
+
+  forlorn: {
+    label: "🌑 Dark & Forlorn",
+    quotes: [
+      "“Stare long enough into the abyss, and you begin to prefer its company.”",
+      "“Not all who wander in the dark are looking for a light.”",
+      "“In the absence of dawn, shadows learn to wear crowns.”",
+      "“Fear is fleeting; emptiness is patient.”",
+      "“What breaks in the dark rarely asks to be mended.”"
+    ],
+    songs: [
+      "Teardrop — Massive Attack",
+      "Chamber of Reflection — Mac DeMarco",
+      "Apocalypse — Cigarettes After Sex",
+      "Me and the Devil — Soap&Skin",
+      "Exit Music (For a Film) — Radiohead"
+    ],
+    animeMovies: [
+      "Angel's Egg",
+      "Perfect Blue",
+      "Vampire Hunter D: Bloodlust",
+      "Jin-Roh: The Wolf Brigade",
+      "Berserk: The Golden Age Arc III - The Advent"
+    ],
+    movies: [
+      "The Lighthouse",
+      "Blade Runner 2049",
+      "The Crow (1994)",
+      "Donnie Darko",
+      "Nosferatu"
+    ],
+    series: [
+      "Texhnolyze",
+      "Serial Experiments Lain",
+      "Monster",
+      "Dark",
+      "True Detective (Season 1)"
+    ]
+  },
+
+  nostalgic: {
+    label: "🕯️ Nostalgic",
+    quotes: [
+      "“You never know you are in the golden days until they turn to dust.”",
+      "“Every old song is a doorway back to someone you used to be.”",
+      "“Childhood ends the day summer stops feeling endless.”",
+      "“We outgrow places, yet our ghosts still live inside them.”",
+      "“A photograph is only a fossil of a vanished second.”"
+    ],
+    songs: [
+      "Kids — Current Joys",
+      "1979 — The Smashing Pumpkins",
+      "Ribs — Lorde",
+      "My Kind of Woman — Mac DeMarco",
+      "Sweater Weather — The Neighbourhood"
+    ],
+    animeMovies: [
+      "Spirited Away",
+      "Whisper of the Heart",
+      "Only Yesterday",
+      "The Girl Who Leapt Through Time",
+      "Summer Wars"
+    ],
+    movies: [
+      "Stand by Me",
+      "Dead Poets Society",
+      "The Perks of Being a Wallflower",
+      "Cinema Paradiso",
+      "Midnight in Paris"
+    ],
+    series: [
+      "FLCL (Fooly Cooly)",
+      "Samurai Champloo",
+      "Stranger Things",
+      "Freaks and Geeks",
+      "Erased"
+    ]
+  },
+
+  ethereal: {
+    label: "🦋 Ethereal & Dreamy",
+    quotes: [
+      "“Between waking and sleep lies the only kingdom without borders.”",
+      "“She walked as though gravity were merely a polite suggestion.”",
+      "“Some dreams feel more real than the mornings that destroy them.”",
+      "“Stardust does not mourn the sky it fell from.”",
+      "“Wonder is the quietest form of magic.”"
+    ],
+    songs: [
+      "Midnight City — M83",
+      "Genesis — Grimes",
+      "Svefn-g-englar — Sigur Rós",
+      "Resonance — HOME",
+      "Cherry-coloured Funk — Cocteau Twins"
+    ],
+    animeMovies: [
+      "Your Name",
+      "Howl's Moving Castle",
+      "Paprika",
+      "Children of the Sea",
+      "Belle"
+    ],
+    movies: [
+      "Interstellar",
+      "The Fountain",
+      "Pan's Labyrinth",
+      "Arrival",
+      "The Secret Life of Walter Mitty"
+    ],
+    series: [
+      "Mushishi",
+      "Land of the Lustrous",
+      "Frieren: Beyond Journey's End",
+      "Sonny Boy",
+      "The OA"
+    ]
+  },
+
+  defiant: {
+    label: "🗡️ Defiant & Fierce",
+    quotes: [
+      "“If fate has already written the ending, tear out the page.”",
+      "“Kneel to nothing that demands your soul as tribute.”",
+      "“A spark in the dark is a declaration of war against the night.”",
+      "“Let them call it madness; history calls it survival.”",
+      "“Even chained, a wolf remembers the taste of freedom.”"
+    ],
+    songs: [
+      "Bury the Light — Casey Edwards",
+      "Warriors — Imagine Dragons",
+      "No Church in the Wild — JAY-Z & Kanye West",
+      "The Rumbling — SiM",
+      "Seven Nation Army — The White Stripes"
+    ],
+    animeMovies: [
+      "Princess Mononoke",
+      "Akira",
+      "Sword of the Stranger",
+      "Redline",
+      "Promare"
+    ],
+    movies: [
+      "Mad Max: Fury Road",
+      "Gladiator",
+      "V for Vendetta",
+      "Dune: Part Two",
+      "John Wick"
+    ],
+    series: [
+      "Attack on Titan",
+      "Berserk (1997)",
+      "Vinland Saga",
+      "Arcane",
+      "Code Geass"
+    ]
+  },
+
+  serene: {
+    label: "🌙 Midnight Calm",
+    quotes: [
+      "“Peace begins the moment you stop arguing with the night.”",
+      "“The moon asks nothing of the ocean, yet the tides still answer.”",
+      "“Solitude is only lonely when you forget your own company.”",
+      "“Breathe slowly; even the stars take eons to burn.”",
+      "“Stillness is where the weary mind repairs itself.”"
+    ],
+    songs: [
+      "Clair de Lune — Claude Debussy",
+      "weightless — Marconi Union",
+      "Sunset Lover — Petit Biscuit",
+      "Nuvole Bianche — Ludovico Einaudi",
+      "Holocene — Bon Iver"
+    ],
+    animeMovies: [
+      "My Neighbor Totoro",
+      "Kiki's Delivery Service",
+      "A Whisker Away",
+      "The Tale of the Princess Kaguya",
+      "Words Bubble Up Like Soda Pop"
+    ],
+    movies: [
+      "Lost in Translation",
+      "Paterson",
+      "Perfect Days",
+      "The Secret World of Arrietty",
+      "Columbus"
+    ],
+    series: [
+      "Laid-Back Camp (Yuru Camp)",
+      "Natsume's Book of Friends",
+      "Midnight Diner: Tokyo Stories",
+      "Barakamon",
+      "March Comes in Like a Lion"
+    ]
+  }
+};
+
+let currentMood = null;
+
+function selectMood(moodKey) {
+  currentMood = moodKey;
+  const moodData = ARCHIVE[moodKey];
+
+  document.getElementById('selected-mood-badge').textContent = moodData.label;
+  document.getElementById('nav-status').textContent = moodData.label;
+
+  // Reset active category buttons & results box
+  document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('results-box').innerHTML = `
+    <div class="results-placeholder">
+      Choose a category above to summon the list...
     </div>
+  `;
 
-    <div class="stats-bar">
-      <span id="word-count">Words: 0</span>
-      <span id="char-count">Characters: 0</span>
-    </div>
+  // Switch view
+  document.getElementById('view-moods').classList.remove('active');
+  document.getElementById('view-explore').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-    <div class="actions">
-      <button class="action-btn" id="pdf-btn">Export PDF (Scannable)</button>
-      <a href="https://www.webnovel.com/book/backrooms-no-exit_29143630108328705" target="_blank" class="neon-button">Read my Webnovel →</a>
-    </div>
-  </main>
+function selectCategory(catKey) {
+  if (!currentMood) return;
 
-  <footer>
-    <p>
-      Find me on 
-      <a href="https://github.com/pmjade/pmjade" target="_blank" rel="noopener noreferrer">GitHub</a> | 
-      <a href="https://www.linkedin.com/in/aki-shinichi-715594354" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    </p>
-  </footer>
+  // Update active button styling
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === catKey);
+  });
 
-  <script>
-    // ======= Rain Canvas Animation =======
-    const canvas = document.getElementById("rain-canvas");
-    const ctx = canvas.getContext("2d");
+  const items = ARCHIVE[currentMood][catKey] || [];
+  const isQuote = catKey === 'quotes';
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
+  const listHTML = items.map((item, idx) => `
+    <li class="title-item ${isQuote ? 'is-quote' : ''}">
+      <span class="item-index">0${idx + 1}</span>
+      <span>${item}</span>
+    </li>
+  `).join('');
 
-    window.addEventListener("resize", resizeCanvas);
+  document.getElementById('results-box').innerHTML = `
+    <ul class="title-list">${listHTML}</ul>
+  `;
+}
 
-    const drops = [];
-    const numDrops = 300;
-
-    for (let i = 0; i < numDrops; i++) {
-      drops.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        length: Math.random() * 20 + 10,
-        speed: Math.random() * 5 + 5,
-      });
-    }
-
-    function drawRain() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = "rgba(174,194,224,0.4)";
-      ctx.lineWidth = 1;
-      ctx.lineCap = "round";
-
-      for (let i = 0; i < drops.length; i++) {
-        const d = drops[i];
-        ctx.beginPath();
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.length);
-        ctx.stroke();
-        d.y += d.speed;
-        if (d.y > canvas.height) {
-          d.y = -20;
-          d.x = Math.random() * canvas.width;
-        }
-      }
-      requestAnimationFrame(drawRain);
-    }
-    drawRain();
-
-    // ======= Word & Character Counter =======
-    const textarea = document.getElementById('content-box');
-    const wordCountDisplay = document.getElementById('word-count');
-    const charCountDisplay = document.getElementById('char-count');
-
-    textarea.addEventListener('input', () => {
-      const text = textarea.value.trim();
-      const words = text ? text.split(/\s+/).length : 0;
-      const chars = text.length;
-
-      wordCountDisplay.textContent = `Words: ${words}`;
-      charCountDisplay.textContent = `Characters: ${chars}`;
-    });
-
-    // ======= Scannable PDF Export =======
-    document.getElementById('pdf-btn').addEventListener('click', () => {
-      window.print();
-    });
-  </script>
+function goHome() {
+  currentMood = null;
+  document.getElementById('nav-status').textContent = 'Select Your State';
+  document.getElementById('view-explore').classList.remove('active');
+  document.getElementById('view-moods').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
